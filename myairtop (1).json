@@ -1,0 +1,369 @@
+{
+  "name": "myairtop",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -896,
+        -368
+      ],
+      "id": "3af0747a-729a-4a59-ab69-3be1ab223a6c",
+      "name": "When chat message received",
+      "webhookId": "21941d2e-593c-4d85-9254-d1ae5f5bee44"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "### Overview\nYou are a smart, advanced web agent connected to tools that let you control a remote web browser. Your primary goal is to fulfill the human's request accurately and efficiently by interacting with web pages using your tools.\n\n### Tools\n\n### Start Browser\n- **Always begin with this tool.**\n- It returns a **sessionId** and **windowId** which are **required** for all other tools.\n- You must include these IDs in every subsequent tool call.\n\n### Load URL\n- Loads a website in the browser window.\n- Pass the 'sessionId', 'windowId', and the desired URL (e.g., 'https://www.bestbuy.com').\n\n### Query\n- You don't have access to the browser screen but you can call this tool to get knowledge and hints of the current browser window.\n- Use this tool to retrieve information that the human has asked for.\n\n### Click\n- Use this tool to click on elements like buttons.\n\n### Type\n- Use this tool to type text into a visible input field. This tool clicks Enter after typing the text so don't send '[ENTER]' commands.\n\n### End Session\n- When the task is fully complete, use this tool to properly close the browser session.\n- You must **ALWAYS USE THIS TOOL BEFORE RESPONDING TO THE HUMAN**\n\n### Think\n- Use when you need to reflect on what you've done and think about what steps to take next"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        -368
+      ],
+      "id": "d9b57af7-0a61-439a-b8c5-4e62c27bfa8f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -544,
+        -144
+      ],
+      "id": "3285fc04-d868-491c-8a17-8243d92fa9b6",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "resource": "interaction",
+        "operation": "type",
+        "sessionId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Session_ID', `the \"sessionID\" return by \"start browser\" tool`, 'string') }}",
+        "windowId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Window_ID', `the \"windowID\" return by \"start browser\" tool`, 'string') }}",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', ``, 'string') }}",
+        "pressEnterKey": true,
+        "elementDescription": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Element_Description', `search bar usually contain placeholder that says \"search\"`, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtopTool",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        -144
+      ],
+      "id": "f35aaaac-2679-4425-b4f4-69ff6910d121",
+      "name": "type tool",
+      "credentials": {
+        "airtopApi": {
+          "id": "X7b4ZvuggHFP6Uok",
+          "name": "Airtop account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "interaction",
+        "sessionId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Session_ID', `the \"sessionID\" return by \"start browser\" tool`, 'string') }}",
+        "windowId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Window_ID', `the \"windowID\" return by \"start browser\" tool`, 'string') }}",
+        "elementDescription": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Element_Description', `the button with tha placeholder that says \"search\"`, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtopTool",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -144
+      ],
+      "id": "95d5fc0e-7467-4f66-8bfb-cc168f1d355f",
+      "name": "clicking tool",
+      "credentials": {
+        "airtopApi": {
+          "id": "X7b4ZvuggHFP6Uok",
+          "name": "Airtop account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "extraction",
+        "operation": "query",
+        "sessionId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Session_ID', `the \"sessionID\" return by \"start browser\" tool`, 'string') }}",
+        "windowId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Window_ID', `the \"windowID\" return by \"start browser\" tool`, 'string') }}",
+        "prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtopTool",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -144
+      ],
+      "id": "0be008e6-d387-4e75-8747-aef34a5780aa",
+      "name": "Query page in Airtop",
+      "credentials": {
+        "airtopApi": {
+          "id": "X7b4ZvuggHFP6Uok",
+          "name": "Airtop account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "window",
+        "operation": "load",
+        "sessionId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Session_ID', `the \"sessionID\" return by \"start browser\" tool`, 'string') }}",
+        "windowId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Window_ID', `the \"windowID\" return by \"start browser\" tool`, 'string') }}",
+        "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtopTool",
+      "typeVersion": 1,
+      "position": [
+        96,
+        -144
+      ],
+      "id": "dd3a9501-f842-4944-b8dc-121e13d60cae",
+      "name": "Load a page in Airtop",
+      "credentials": {
+        "airtopApi": {
+          "id": "X7b4ZvuggHFP6Uok",
+          "name": "Airtop account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "terminate",
+        "sessionId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Session_ID', `the \"sessionID\" return by \"start browser\" tool`, 'string') }}"
+      },
+      "type": "n8n-nodes-base.airtopTool",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -144
+      ],
+      "id": "7eb0e3a0-b4d4-452d-8dc5-1c143c48f6ab",
+      "name": "Terminate tool",
+      "credentials": {
+        "airtopApi": {
+          "id": "X7b4ZvuggHFP6Uok",
+          "name": "Airtop account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        352,
+        -144
+      ],
+      "id": "0c2a0b77-7765-4bbb-9b32-0ef7778f0826",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "PFyh92Lsw0EOoxFr",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/PFyh92Lsw0EOoxFr",
+          "cachedResultName": "my browser"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "profile_name": "mianmajid",
+            "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('url', `url of website that we are visiting`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "profile_name",
+              "displayName": "profile_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -416,
+        -144
+      ],
+      "id": "0bd77229-f195-49fb-8d4c-fed7c1ac4a80",
+      "name": "create browser"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxOutputTokens": 2000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        -160
+      ],
+      "id": "11fb753e-b529-4c2a-ab5c-0f63c05ec787",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "FTaudclM83tUzxCj",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "type tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "clicking tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query page in Airtop": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load a page in Airtop": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Terminate tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create browser": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ee50f4e1-91f6-4e96-8f8e-8611d9ccdb56",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2dfaf0d892b798db9b7e09e36002616ef4521b8511e1a8ccb8d7925404edce96"
+  },
+  "id": "Kkbk5r6ihKQRSyL3",
+  "tags": []
+}
